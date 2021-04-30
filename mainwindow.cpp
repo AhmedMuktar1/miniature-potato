@@ -9,18 +9,23 @@
 #include <QTextStream>
 #include <fstream>
 #include "mainhub.h"
+#include "simplecrypt.h"
+
 QString Username = "default";
 int FriendCount = 0;
 QString Users[50][2];
+SimpleCrypt crypto(5346);
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    ui->loginUsernameInput->setEnabled(false);
-    ui->loginPasswordInput->setEnabled(false);
-
+    ui->lineEditHost->setEnabled(false);
+    ui->spinBoxPort->setEnabled(false);
+    ui->ConnectButton->setEnabled(false);
+    ui->sendMessage->setEnabled(false);
+    ui->AddRecipient->setEnabled(false);
     m_client = new QMqttClient(this);
     m_client->setHostname(ui->lineEditHost->text());
     m_client->setPort(ui->spinBoxPort->value());
@@ -41,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
         } else if(secondMessage == "Friend?"){
             //open box to ask to be friends *******************************************
             publish(sender,Username+":Friend Yes");
+            addFriend(sender);
         } else if(secondMessage == "Friend Yes"){
             addFriend(sender);
         }
@@ -50,15 +56,19 @@ MainWindow::MainWindow(QWidget *parent)
                 + QLatin1String(" Message: ")
                 + message
                 + QLatin1Char('\n');
-        ui->plainTextEdit->insertPlainText(content);
-        //writeToFile(message,message,content);
+        //ui->plainTextEdit->insertPlainText(content);
+        QString e = message;
+        QString Sender = e.section(":",0,0);
+        QString MessageIn = e.section(":",1,1);
+        WTFile(Sender,Sender,MessageIn);
+        if (sender == ui->recipientTitle->text()){UpdateChat(sender);}
     });
 
     connect(m_client, &QMqttClient::pingResponseReceived, this, [this]() {
         const QString content = QDateTime::currentDateTime().toString()
                     + QLatin1String(" PingResponse")
                     + QLatin1Char('\n');
-        ui->plainTextEdit->insertPlainText(content);
+        //ui->plainTextEdit->insertPlainText(content);
         //writeToFile("ping","ping","ping recived");
     });
 
@@ -107,7 +117,7 @@ void MainWindow::updateLogStateChange()
                     + QLatin1String(": State Change")
                     + QString::number(m_client->state())
                     + QLatin1Char('\n');
-    ui->plainTextEdit->insertPlainText(content);
+    //ui->plainTextEdit->insertPlainText(content);
     //writeToFile(Username,Username,content);
 }
 
@@ -127,19 +137,21 @@ void MainWindow::setClientPort(int p)
 void MainWindow::on_ConnectButton_clicked()
 {
     if (m_client->state() == QMqttClient::Disconnected) {
+        m_client->connectToHost();
         ui->lineEditHost->setEnabled(false);
         ui->spinBoxPort->setEnabled(false);
-        ui->loginUsernameInput->setEnabled(true);
-        ui->loginPasswordInput->setEnabled(true);
         ui->ConnectButton->setText("Disconnect");
-        m_client->connectToHost();
+        delay(1);
+        ConnectMe();
+        ui->AddRecipient->setEnabled(true);
+        if(ui->recipientTitle->text() != "") {ui->sendMessage->setEnabled(true);}
     } else {
         m_client->disconnectFromHost();
         ui->lineEditHost->setEnabled(true);
         ui->spinBoxPort->setEnabled(true);
-        ui->loginUsernameInput->setEnabled(false);
-        ui->loginPasswordInput->setEnabled(false);
         ui->ConnectButton->setText("Connect");
+        ui->AddRecipient->setEnabled(false);
+        ui->sendMessage->setEnabled(false);
     }
 }
 
@@ -150,49 +162,58 @@ void MainWindow::on_loginButton_clicked()
     QString username = ui->loginUsernameInput->text();
     QString password = ui->loginPasswordInput->text();
 
-    //QFile file("userdata.txt");
-    //if ((username == "") & (password == "")) {
-    //    QMessageBox::warning(this, "Login", "Username and password incorrect!");
-    //}
-    //else {
-    //    if(!file.open(QFile::ReadOnly | QFile::Text)){
-    //        QMessageBox::warning(this, "Warning", "File not open.");
-    //    }
-    if (username == "Mukki" || "Ibby"){
-//            QTextStream in(&file);
-//            QString line;
-//            while(!in.atEnd()){
-//                QString UserName = in.readLine();
-//                QString Password = in.readLine();
-//                QMessageBox::information(this, UserName, Password);
-//                int x = QString::compare(username, UserName, Qt::CaseSensitive);
-//                int y = QString::compare(password, Password, Qt::CaseSensitive);
-//                if(x == 0 && y == 0) {
+    QFile file("//home//ntu-user//SDIChatApplication//userdata.txt");
+    if ((username == "") & (password == "")) {
+        QMessageBox::warning(this, "Login", "Username and password incorrect!");
+    }
+    else {
+        if(!file.open(QFile::ReadOnly | QFile::Text)){
+            QMessageBox::warning(this, "Warning", "File not open.");
+        }
+            QTextStream in(&file);
+            QString line;
+            while(!in.atEnd()){
+                QString UserName = crypto.decryptToString(in.readLine());
+                QString Password = crypto.decryptToString(in.readLine());
+                int x = QString::compare(username, UserName, Qt::CaseSensitive);
+                int y = QString::compare(password, Password, Qt::CaseSensitive);
+                if(x == 0 && y == 0) {
+                    ui->loginPasswordInput->setEnabled(false);
+                    ui->loginUsernameInput->setEnabled(false);
+                    ui->loginButton->setEnabled(false);
+                    ui->signInButton->setEnabled(false);
+                    ui->lineEditHost->setEnabled(true);
+                    ui->spinBoxPort->setEnabled(true);
+                    ui->ConnectButton->setEnabled(true);
                     QMessageBox::information(this, "Login", "Username and password is correct");
                     Username = username;
-                    ConnectMe();
-//            }
-//            file.close();
-//        }
+                    QString answer = readAllFromFile(1,Username+"FriendsList.txt");
+                    for (int i=0;i<answer.section(":",0,0);i++) {
+                        Users[i][0] = answer.section(":",i+1,i+1);
+                        ui->comboBox->addItem(Users[i][0]);
+                    }
+                }
+            }
+            file.close();
     }
 }
 
-//void MainWindow::on_pushButton_clicked()
-//{
-//    Username = "Mukki";
-//    ConnectMe();
-//}
-
-//void MainWindow::on_pushButton_2_clicked()
-//{
-//    publish(Username,"yay");
-//}
-
 void MainWindow::on_AddRecipient_clicked()
 {//*********************************** change to not accept null input
-    if(ui->AddRecipientlineEdit->text() != " " ){
-        Recipient = ui->AddRecipientlineEdit->text();
-        publish(Recipient,Username+":" + "Friend?");
+    QString recipient = ui->AddRecipientlineEdit->text();
+    int num = 0;
+    if(recipient != "" ){
+        for (int i = 0;i<=FriendCount;i++) {
+            if(recipient == Users[i][0]){
+                QMessageBox::warning(this, "Add Friend", "You are already friends with " + recipient);
+                num = 1;
+            }
+        }
+        if(num == 0){
+            Recipient = ui->AddRecipientlineEdit->text();
+            publish(Recipient,Username+":" + "Friend?");
+        }
+
     }
 }
 
@@ -207,8 +228,19 @@ void MainWindow::addFriend(QString username){
         Users[FriendCount][0] = username;
         Users[FriendCount][1] = "Online";
         FriendCount++;
+
+        WTFile(Username+"FriendsList","updateFriendsList",username);
     }
     updateUIOnline();
+}
+
+void MainWindow::WTFile(QString Chatname, QString username, QString message){
+    filehandler file;
+    QString answer;
+    answer = writeToFile(Chatname+".txt",username,message);
+    if (answer == "File Opening Error"){
+        QMessageBox::critical(this, QLatin1String("Error"), QLatin1String("Could not open file"));
+    }
 }
 
 void MainWindow::updateOnline(QString username, int num){
@@ -229,8 +261,54 @@ void MainWindow::updateOnline(QString username, int num){
 
 }
 
-void MainWindow::updateUIOnline(){
+void MainWindow::updateUIOnline(QString sender){
     for (int i = 0;i <= FriendCount;i++) {
-        ui->plainTextEdit->insertPlainText((Users[i][0]+" ... "+Users[i][1]));
+        ui->comboBox->addItem(sender);
+    }
+}
+
+void MainWindow::on_comboBox_activated(const QString &arg1)
+{
+    ui->recipientTitle->setText(ui->comboBox->currentText());
+    UpdateChat(ui->recipientTitle->text());
+    if(ui->recipientTitle->text() != "") {ui->sendMessage->setEnabled(true);}
+}
+
+void MainWindow::on_sendMessage_clicked()
+{
+    publish(ui->recipientTitle->text(),Username+":"+ui->messageInput->text());
+    WTFile(ui->recipientTitle->text(),Username,ui->messageInput->text());
+    UpdateChat(ui->recipientTitle->text());
+}
+
+void MainWindow::UpdateChat(QString recipient){
+    QString OldMessages = readAllFromFile(2,recipient);
+    ui->plainTextEdit->clear();
+    ui->plainTextEdit->setPlainText(OldMessages);
+    ui->plainTextEdit->setCenterOnScroll(true);
+    ui->plainTextEdit->ensureCursorVisible();
+}
+
+void MainWindow::delay(int n)
+{
+    QTime dieTime= QTime::currentTime().addSecs(n);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
+void MainWindow::on_signInButton_clicked()
+{
+    QString SignupUsername = ui->loginUsernameInput->text();
+    QString SignupPassword = ui->loginPasswordInput->text();
+    if(SignupUsername.length()>=4 && SignupPassword.length()>=4){
+        QString usernameEncrypted =  crypto.encryptToString(SignupUsername);
+        QString passwordEncrypted =  crypto.encryptToString(SignupPassword);
+        WTFile("userdata","Signup",usernameEncrypted+":"+passwordEncrypted);
+        QFile file("//home//ntu-user//SDIChatApplication//"+SignupUsername+"FriendsList.txt");
+        file.open(QIODevice::Append | QIODevice::Text);
+        file.close();
+        QMessageBox::information(this, "Sign Up", "congratulations, You've been signed up!");
+    }else {
+        QMessageBox::warning(this,"Sign Up Error", "Username and passowrd must be over 4 characters");
     }
 }

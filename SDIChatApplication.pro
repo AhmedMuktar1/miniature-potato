@@ -19,12 +19,14 @@ SOURCES += \
     filehandler.cpp \
     main.cpp \
     mainhub.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    simplecrypt.cpp
 
 HEADERS += \
     filehandler.h \
     mainhub.h \
-    mainwindow.h
+    mainwindow.h \
+    simplecrypt.h
 
 FORMS += \
     mainhub.ui \

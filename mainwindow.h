@@ -31,7 +31,14 @@ private slots:
     void addFriend(QString username);
     void updateOnline(QString username, int num);
     void on_AddRecipient_clicked();
-    void updateUIOnline();
+    void updateUIOnline(QString Sender);
+    void WTFile(QString Chatname, QString username, QString message);
+    void on_comboBox_activated(const QString &arg1);
+    void UpdateChat(QString recipient);
+    void on_sendMessage_clicked();
+    void delay(int n);
+    void on_signInButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QMqttClient *m_client;

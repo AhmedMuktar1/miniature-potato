@@ -173,6 +173,24 @@
             <number>0</number>
            </property>
            <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <widget class="QLabel" name="loginUsernameLabel">
+               <property name="text">
+                <string>Username:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="loginUsernameInput">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_14">
              <item>
               <widget class="QLabel" name="loginPasswordLabel">
@@ -193,24 +211,6 @@
                 <font>
                  <family>Ubuntu Condensed</family>
                 </font>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
-             <item>
-              <widget class="QLabel" name="loginUsernameLabel">
-               <property name="text">
-                <string>Username:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="loginUsernameInput">
-               <property name="enabled">
-                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -328,7 +328,7 @@
         <item>
          <widget class="QWidget" name="signUpInWrapper" native="true">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -353,13 +353,36 @@
                <item>
                 <widget class="QPushButton" name="AddRecipient">
                  <property name="text">
-                  <string>Add Recipient</string>
+                  <string>Send Friend Request</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
             </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Select Friends To Chat With:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBox"/>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>

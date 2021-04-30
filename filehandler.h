@@ -9,36 +9,73 @@ class filehandler
 public:
     filehandler();
     QString writeToFile(QString chatname, QString username,QString messages);
-    QString readAllFromFile(QString fileName);
+    QString readAllFromFile(int command, QString fileName);
 
 };
 
 inline QString writeToFile(QString chatname, QString username,QString messages){
-    QString Chatname = chatname.split(" ").at(0);
-    QString Username = username.split(" ").at(0);
-    QFile file("//home//ntu-user//Application//chatroom"+Chatname+".txt");
-    if(!file.open(QIODevice::Append | QIODevice::Text)){
-        return "no file";
+    QString filepath;
+    if(username == "updateFriendsList" || username == "Signup"){
+        filepath = "//home//ntu-user//SDIChatApplication//";
+    }
+    else {
+        filepath = "//home//ntu-user//SDIChatApplication//chatroom";
+    }
+    QFile file(filepath+chatname);
+    file.open(QIODevice::Append | QIODevice::Text);
+    QTextStream out(&file);
+    if(username == "updateFriendsList"){
+        out << messages + "\n";
+    }else if(username == "Signup"){
+        QString a = messages.section(":",0,0);
+        QString b = messages.section(":",1,1);
+        out << a << +"\n";
+        out << b << +"\n";
     }else{
-        QTextStream out(&file);
-        out << Username + "\n";
+        out << username + "\n";
         out << messages + "\n";
         out << " \n";
-        file.close();
-        return "file updated";
     }
+    file.close();
+    return "done";
 }
 
-inline QString readAllFromFile(QString fileName){
+inline QString readAllFromFile(int command, QString fileName){
+    QString filepath;
+    int Command = command;
 
-    QFile file("//home//ntu-user//Application//chatroom"+fileName+".txt");
-    if(!file.open(QFile::ReadOnly | QFile::Text)){
-        return "no file";
+    if(Command == 1){
+
+        filepath = ("//home//ntu-user//SDIChatApplication//"+fileName);
+    } else if(Command == 2){
+        filepath = ("//home//ntu-user//SDIChatApplication//chatroom"+fileName+".txt");
+    }
+
+    QFile file(filepath);
+
+    if(!file.open(QFile::ReadOnly | QFile::Text)){ return "no file";
     } else{
         QTextStream in(&file);
-        QString allText = in.readAll();
-        file.close();
-        return allText;
+        if(command == 1)
+        {
+            QString message;
+            int num = 0;
+
+            while(!in.atEnd()){
+                QString line = in.readLine();
+                message = message +line+":";
+                num++;
+            }
+
+            file.close();
+            return QString::number(num)+":"+message;
+
+        } else if (command == 2)
+        {
+            QString allText = in.readAll();
+            file.close();
+            return allText;
+        }
     }
 }
 
