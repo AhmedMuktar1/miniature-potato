@@ -15,12 +15,7 @@ public:
 
 inline QString writeToFile(QString chatname, QString username,QString messages){
     QString filepath;
-    if(username == "updateFriendsList" || username == "Signup"){
-        filepath = "//home//ntu-user//SDIChatApplication//";
-    }
-    else {
-        filepath = "//home//ntu-user//SDIChatApplication//chatroom";
-    }
+    filepath = "//home//ntu-user//SDIChatApplication//";
     QFile file(filepath+chatname);
     file.open(QIODevice::Append | QIODevice::Text);
     QTextStream out(&file);
@@ -31,6 +26,10 @@ inline QString writeToFile(QString chatname, QString username,QString messages){
         QString b = messages.section(":",1,1);
         out << a << +"\n";
         out << b << +"\n";
+    } else if(username == "newGC"){
+        out<< messages +"\n";
+    } else if (username == ""){
+        //used to just create a new file.
     }else{
         out << username + "\n";
         out << messages + "\n";
@@ -44,11 +43,10 @@ inline QString readAllFromFile(int command, QString fileName){
     QString filepath;
     int Command = command;
 
-    if(Command == 1){
-
+    if(Command == 1 || command == 3){
         filepath = ("//home//ntu-user//SDIChatApplication//"+fileName);
     } else if(Command == 2){
-        filepath = ("//home//ntu-user//SDIChatApplication//chatroom"+fileName+".txt");
+        filepath = ("//home//ntu-user//SDIChatApplication//"+fileName+".txt");
     }
 
     QFile file(filepath);
@@ -56,14 +54,18 @@ inline QString readAllFromFile(int command, QString fileName){
     if(!file.open(QFile::ReadOnly | QFile::Text)){ return "no file";
     } else{
         QTextStream in(&file);
-        if(command == 1)
+        if(command == 1 || command == 3)
         {
             QString message;
             int num = 0;
 
             while(!in.atEnd()){
                 QString line = in.readLine();
-                message = message +line+":";
+                if(command == 1){
+                    message = message +line+":";
+                } else if(command == 3){
+                    message = message +line;
+                }
                 num++;
             }
 
@@ -77,6 +79,7 @@ inline QString readAllFromFile(int command, QString fileName){
             return allText;
         }
     }
+    return "0";
 }
 
 #endif // FILEHANDLER_H
