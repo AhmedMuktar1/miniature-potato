@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QMqttClient>
-#include "mainhub.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,7 +28,6 @@ private slots:
     void on_ConnectButton_clicked();
     void on_loginButton_clicked();
     void addFriend(QString username);
-    void updateOnline(QString username, int num);
     void on_AddRecipient_clicked();
     void updateGUIOnline();
     void WTFile(QString Chatname, QString username, QString message);
@@ -54,10 +52,14 @@ private slots:
     void on_comboBox_2_activated(const QString &arg1);
     void updateGC(int a);
     void Subscribe(QString);
+    void updateGCDetails(int a, QString GCN, QString user);
+    void on_RemoveUser_clicked();
+    void onlineUpdater();
+    void on_PremoteUserToAdmin_clicked();
+    void Status(int i);
 private:
     Ui::MainWindow *ui;
     QMqttClient *m_client;
-    mainhub *Mainhub;
 
 };
 #endif // MAINWINDOW_H

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1001</width>
+    <width>1038</width>
     <height>750</height>
    </rect>
   </property>
@@ -502,6 +502,58 @@
             </widget>
            </item>
            <item>
+            <widget class="QWidget" name="RemoveUserWrap" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <property name="topMargin">
+               <number>1</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label_7">
+                <property name="text">
+                 <string>Remove User:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_3"/>
+              </item>
+              <item>
+               <widget class="QPushButton" name="RemoveUser">
+                <property name="text">
+                 <string>Remove User</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="modWrap" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <property name="topMargin">
+               <number>10</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>Pick User To Promote to moderator:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_4"/>
+              </item>
+              <item>
+               <widget class="QPushButton" name="PremoteUserToAdmin">
+                <property name="text">
+                 <string>Promote User To Moderator</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
             <spacer name="verticalSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -629,13 +681,69 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>603</width>
+                <width>640</width>
                 <height>433</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_8">
                <item>
-                <widget class="QPlainTextEdit" name="plainTextEdit"/>
+                <layout class="QHBoxLayout" name="horizontalLayout_17">
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPlainTextEdit" name="plainTextEdit">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <layout class="QVBoxLayout" name="verticalLayout_12">
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_9">
+                     <property name="text">
+                      <string>Users Online:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPlainTextEdit" name="plainTextEdit_online">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>150</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
                </item>
               </layout>
              </widget>
@@ -686,7 +794,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1001</width>
+     <width>1038</width>
      <height>22</height>
     </rect>
    </property>

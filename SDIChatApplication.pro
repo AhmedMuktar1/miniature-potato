@@ -18,18 +18,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     filehandler.cpp \
     main.cpp \
-    mainhub.cpp \
     mainwindow.cpp \
     simplecrypt.cpp
 
 HEADERS += \
     filehandler.h \
-    mainhub.h \
     mainwindow.h \
     simplecrypt.h
 
 FORMS += \
-    mainhub.ui \
     mainwindow.ui
 
 # Default rules for deployment.
